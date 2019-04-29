@@ -35,7 +35,7 @@ namespace SqlQueryClass
         {
             if (sqlConnection.State != ConnectionState.Open)
             {
-                sqlConnection.ConnectionString = @"Data Source = 192.168.12.20; Initial Catalog = Training2019; Integrated Security=True";
+                sqlConnection.ConnectionString = "Data Source = 192.168.12.20; Initial Catalog = Training2019; User ID=qancs_imarc; Password=qancs@2019  ";
                 sqlConnection.Open();
             }
         }
