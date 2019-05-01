@@ -7,8 +7,7 @@ using System.Data.SqlClient;
 namespace SqlQueryClass
 {
     class DataHelper
-    {
-        SqlConnection sqlConnection = new SqlConnection();
+    { SqlConnection sqlConnection = new SqlConnection();
 
         public DataTable GetResults(string sqlQuery)
         {
@@ -29,7 +28,58 @@ namespace SqlQueryClass
             return null;
         }
 
-        
+        public DataTable StoreProcedureQuery(string storeProcedureMethod)
+        {
+            DataTable Dtresult = new DataTable();
+            OpenSqlConn();
+
+            SqlCommand sqlCommand = new SqlCommand(storeProcedureMethod, sqlConnection);
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+            Dtresult.Load(sqlCommand.ExecuteReader());
+
+            return Dtresult;}
+
+        //public void StoreProcedureQuery(string storeProcedureMethod, DBDataModel dbDataModel)
+        public DataTable StoreProcedureSearchQuery(string storeProcedureMethod, object property)
+        {
+            DataTable Dtresult = new DataTable();
+            //DataTable Dtresult = new DataTable();
+            OpenSqlConn();
+
+            SqlCommand sqlCommand = new SqlCommand(storeProcedureMethod, sqlConnection);
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+
+            foreach (var parameter in property.GetType().GetProperties())
+            {
+                var commandParameter = sqlCommand.CreateParameter();
+                commandParameter.ParameterName = "@" + parameter.Name;
+                commandParameter.Value = parameter.GetValue(property);
+                sqlCommand.Parameters.Add(commandParameter);
+            }
+             Dtresult.Load(sqlCommand.ExecuteReader());
+
+            return Dtresult;
+        }
+
+        public void StoreProcedureOtherQuery(string storeProcedureMethod, object property)
+        {
+            DataTable Dtresult = new DataTable();
+            //DataTable Dtresult = new DataTable();
+            OpenSqlConn();
+
+            SqlCommand sqlCommand = new SqlCommand(storeProcedureMethod, sqlConnection);
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+
+            foreach (var parameter in property.GetType().GetProperties())
+            {
+                var commandParameter = sqlCommand.CreateParameter();
+                commandParameter.ParameterName = "@" + parameter.Name;
+                commandParameter.Value = parameter.GetValue(property);
+                sqlCommand.Parameters.Add(commandParameter);
+            }
+
+            sqlCommand.ExecuteNonQuery();
+        }
 
         private void OpenSqlConn()
         {
